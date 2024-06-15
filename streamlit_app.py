@@ -4,6 +4,8 @@ import numpy as np
 import rembg
 import io
 import zipfile
+import os
+import requests
 
 # URL to the model
 MODEL_URL = "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx"
