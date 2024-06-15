@@ -5,6 +5,8 @@ import rembg
 import io
 import zipfile
 
+rembg.bg.get_model('u2net')
+
 def remove_background(image):
     image_np = np.array(image)
     result = rembg.remove(image_np)
