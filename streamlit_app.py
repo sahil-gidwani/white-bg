@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image, ImageOps
+from PIL import Image
 import numpy as np
 import rembg
 import io
@@ -38,13 +38,15 @@ st.title("Bulk Background Remover and White Background Adder")
 uploaded_files = st.file_uploader("Upload Images", accept_multiple_files=True, type=['jpg', 'jpeg', 'png'])
 
 if uploaded_files:
-    with zipfile.ZipFile("processed_images.zip", "w") as zf:
+    zip_buffer = io.BytesIO()
+    
+    with zipfile.ZipFile(zip_buffer, "w") as zf:
         for uploaded_file in uploaded_files:
             # Read the image
             image = Image.open(uploaded_file)
             
             # Process the image
-            result_image = remove_background(image)
+            result_image = remove_background(image, MODEL_PATH)
             
             # Save the result to a buffer
             buffer = io.BytesIO()
@@ -54,10 +56,11 @@ if uploaded_files:
             # Write the buffer to the zip file with the original file name
             zf.writestr(uploaded_file.name, buffer.read())
     
-    with open("processed_images.zip", "rb") as f:
-        st.download_button(
-            label="Download All Images as ZIP",
-            data=f,
-            file_name="processed_images.zip",
-            mime="application/zip"
-        )
+    zip_buffer.seek(0)
+    
+    st.download_button(
+        label="Download All Images as ZIP",
+        data=zip_buffer,
+        file_name="processed_images.zip",
+        mime="application/zip"
+    )
